@@ -20,6 +20,8 @@ $conditions = [];
 $params = [];
 $types = '';
 
+$conditions[] = "user_id != 5"; 
+
 if ($statusFilter !== '') {
     $conditions[] = "status_user = ?";
     $params[] = $statusFilter;

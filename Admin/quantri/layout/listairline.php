@@ -160,6 +160,7 @@ $order = $paginationData['order'];
                     <div class="form-group">
                         <label>Thay đổi logo (nếu muốn):</label>
                         <input type="file" name="airline_logo" class="form-control" accept="image/*">
+                        <img id="edit-logo-preview" src="" alt="Logo preview" class="img-fluid mt-2" style="max-height:100px; display: none;">
                     </div>
                 </form>
             </div>
@@ -192,7 +193,7 @@ $order = $paginationData['order'];
 
     <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 <script src="/banvemaybay/Admin/assets/js/main4.js"></script>
 <script>
     $(document).ready(function() {

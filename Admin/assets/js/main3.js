@@ -5,6 +5,83 @@ $(document).ready(function() {
         title: $('#detailBookingId')
     };
 
+    let currentPage = parseInt(new URLSearchParams(window.location.search).get('page')) || 1;
+    let currentSort = new URLSearchParams(window.location.search).get('sort') || 'booking_date';
+    let currentOrder = new URLSearchParams(window.location.search).get('order') || 'DESC';
+    let totalPages = parseInt($('#paginationContainer').find('.pagination a[data-page]').last().data('page')) || 1;
+
+    function loadBookings(page) {
+        const status = $('#statusFilter').val();
+        const search = $('#searchInput').val();
+
+        const url = new URL(window.location);
+        url.searchParams.set('page', page);
+        url.searchParams.set('status', status);
+        url.searchParams.set('search', search);
+        url.searchParams.set('sort', currentSort);
+        url.searchParams.set('order', currentOrder);
+        window.history.pushState({}, '', url);
+
+        $('#bookingTableBody').html('<tr><td colspan="6" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>');
+
+        $.ajax({
+            url: '/banvemaybay/Admin/quantri/layout/include/booking_logic.php',
+            method: 'GET',
+            data: {
+                page: page,
+                status: status,
+                search: search,
+                sort: currentSort,
+                order: currentOrder
+            },
+            dataType: 'json',
+            success: function(response) {
+                console.log('Response:', response);
+                if (response.success) {
+                    $('#bookingTableBody').html(response.html);
+                    $('#paginationContainer').html(response.pagination);
+                    currentPage = page;
+                    totalPages = response.totalPages;
+                } else {
+                    alert('Lỗi: ' + (response.error || 'Không thể tải dữ liệu'));
+                }
+            },
+            error: function(xhr) {
+                console.error('AJAX Error:', xhr.status, xhr.statusText, xhr.responseText);
+                alert('Lỗi hệ thống: ' + xhr.statusText);
+            }
+        });
+    }
+    $('#statusFilter').on('change', function() {
+        loadBookings(1);
+    });
+
+    $('#searchInput').on('keypress', function(e) {
+        if (e.key === 'Enter') {
+            loadBookings(1);
+        }
+    });
+
+    $(document).on('click', '.pagination a[data-page]', function(e) {
+        e.preventDefault();
+        const page = $(this).data('page');
+        if (page > 0 && page <= totalPages) {
+            loadBookings(page);
+        }
+    });
+
+    $(document).on('click', '.sort-link', function(e) {
+        e.preventDefault();
+        const sort = $(this).data('sort');
+        if (sort === currentSort) {
+            currentOrder = currentOrder === 'ASC' ? 'DESC' : 'ASC';
+        } else {
+            currentSort = sort;
+            currentOrder = 'DESC';
+        }
+        loadBookings(currentPage);
+    });
+
     $(document).on('click', '.view-detail-btn', function() {
         const bookingId = $(this).data('booking-id');
         showLoading(bookingModal);
@@ -67,6 +144,7 @@ $(document).ready(function() {
             }
         });
     });
+
     function showLoading(modal) {
         modal.title.text('Loading...');
         modal.content.html(`
@@ -93,10 +171,8 @@ $(document).ready(function() {
         modal.title.text(data.booking.booking_id);
         
         const determineDetailedStatus = (booking) => {
-            // Xác định trạng thái thanh toán dựa trên status_bookings
-            const paymentText = (booking.status_bookings === 'pending' || booking.status_bookings === 'cancelled') 
-                ? 'Chưa thanh toán' 
-                : 'Đã thanh toán';
+            // Thanh toán dựa trên payment_status từ bảng payment
+            const paymentText = booking.payment_status === 'Success' ? 'Đã thanh toán' : 'Chưa thanh toán';
 
             if (booking.status_bookings === 'pending') return {
                 text: 'Chờ xử lý',
@@ -106,31 +182,31 @@ $(document).ready(function() {
             };
             if (booking.status_bookings === 'paid') return {
                 text: 'Đã thanh toán',
-                class: 'bg-primary',
+                class: 'bg-primary text-white',
                 icon: 'fa-check-circle',
                 paymentText: paymentText
             };
             if (booking.status_bookings === 'issued') return {
                 text: 'Đã phát hành vé',
-                class: 'bg-info',
+                class: 'bg-info text-white',
                 icon: 'fa-ticket-alt',
                 paymentText: paymentText
             };
             if (booking.status_bookings === 'used') return {
                 text: 'Đã sử dụng',
-                class: 'bg-success',
+                class: 'bg-success text-white',
                 icon: 'fa-plane',
                 paymentText: paymentText
             };
             if (booking.status_bookings === 'cancelled') return { 
                 text: 'Đã hủy', 
-                class: 'bg-danger', 
+                class: 'bg-danger text-white', 
                 icon: 'fa-times-circle',
                 paymentText: paymentText
             };
             return {
                 text: 'Không xác định',
-                class: 'bg-secondary',
+                class: 'bg-secondary text-white',
                 icon: 'fa-question-circle',
                 paymentText: 'Không xác định'
             };
@@ -141,9 +217,9 @@ $(document).ready(function() {
             <div class="row mb-4">
                 <div class="col-md-6">
                     <h5><i class="fas fa-plane-departure"></i> Chuyến bay</h5>
-                    <p><strong>Số hiệu:</strong> ${data.booking.flight_number}</p>
-                    <p><strong>Từ:</strong> ${data.booking.departure_airport} 
-                    → <strong>Đến:</strong> ${data.booking.arrival_airport}</p>
+                    <p><strong>Số hiệu:</strong> ${escapeHtml(data.booking.flight_number)}</p>
+                    <p><strong>Từ:</strong> ${escapeHtml(data.booking.departure_airport)} 
+                    → <strong>Đến:</strong> ${escapeHtml(data.booking.arrival_airport)}</p>
                     <p><strong>Khởi hành:</strong> ${formatDateTime(data.booking.departure_date)} 
                     ${data.booking.departure_time}</p>
                     <p><strong>Đến:</strong> ${data.booking.arrival_time}</p>

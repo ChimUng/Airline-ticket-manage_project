@@ -31,11 +31,19 @@ $order = $paginationData['order'];
                     <option value="Cancelled" <?= $statusFilter === 'Cancelled' ? 'selected' : '' ?>>Đã hủy</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
+                <label for="timeFilter">Lọc theo thời gian:</label>
+                <select id="timeFilter" class="form-control">
+                    <option value="">Tất cả</option>
+                    <option value="current" <?= isset($_GET['time']) && $_GET['time'] === 'current' ? 'selected' : '' ?>>Hiện tại</option>
+                    <option value="past" <?= isset($_GET['time']) && $_GET['time'] === 'past' ? 'selected' : '' ?>>Đã qua</option>
+                </select>
+            </div>
+            <div class="col-md-3">
                 <label for="searchInput">Tìm kiếm:</label>
                 <input type="text" id="searchInput" class="form-control" placeholder="Nhập ID, mã IATA, mã chuyến bay, sân bay..." value="<?= htmlspecialchars($search) ?>">
             </div>
-            <div class="col-md-4 d-flex align-items-end">
+            <div class="col-md-3 d-flex align-items-end">
                 <button class="btn btn-primary" onclick="loadFlights(1)">Tìm kiếm</button>
             </div>
         </div>
@@ -100,6 +108,11 @@ $order = $paginationData['order'];
                                 <i class="fas fa-sort<?= $sort === 'total_seat' ? ($order === 'ASC' ? '-up' : '-down') : '' ?>"></i>
                             </a>
                         </th>
+                        <th>
+                            <a href="#" class="sort-link" data-sort="available_seats">Ghế trống
+                                <i class="fas fa-sort<?= $sort === 'available_seats' ? ($order === 'ASC' ? '-up' : '-down') : '' ?>"></i>
+                            </a>
+                        </th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -126,6 +139,7 @@ $order = $paginationData['order'];
                                 </span>
                             </td>
                             <td><?= htmlspecialchars($flight['total_seat']) ?></td>
+                            <td><?= htmlspecialchars($flight['available_seats']) ?></td>
                             <td>
                                 <button class="btn btn-info btn-circle btn-sm" onclick="openEditFlightModal(<?= $flight['flight_id'] ?>)" data-id="<?= $flight['flight_id'] ?>">
                                     <i class="fas fa-info-circle"></i>
@@ -257,6 +271,9 @@ $order = $paginationData['order'];
                     <div class="form-group row">
                         <div class="col-sm-6 mb-3 mb-sm-0">
                             <input type="number" class="form-control form-control-user" id="edit_total_seat" name="edit_total_seat" placeholder="Số ghế">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control form-control-user" id="edit_available_seats" name="edit_available_seats" placeholder="Ghế trống" disabled>
                         </div>
                     </div>
                 </form>

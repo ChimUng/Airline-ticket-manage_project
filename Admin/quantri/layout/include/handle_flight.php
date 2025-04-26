@@ -1,5 +1,7 @@
 <?php
 require('../../db/conn.php');
+include $_SERVER['DOCUMENT_ROOT'] . '/banvemaybay/Admin/quantri/layout/include/auth_middleware.php';
+
 // Bật chế độ hiển thị lỗi để dễ dàng gỡ lỗi
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -42,7 +44,7 @@ if (isset($data['action'])) {
             }
             break;
         case "list":
-            $sql = "SELECT flight_id, IATA_code_airline, flight_number, departure_date, departure_airport, arrival_airport, departure_time, arrival_time, price, status_flight, total_seat FROM flights";
+            $sql = "SELECT flight_id, IATA_code_airline, flight_number, departure_date, departure_airport, arrival_airport, departure_time, arrival_time, price, status_flight, total_seat, available_seats FROM flights";
             $result = $conn->query($sql);
             $flights = [];
             if ($result->num_rows > 0) {
@@ -76,6 +78,13 @@ if (isset($data['action'])) {
             break;
 
         case "add":
+            // Kiểm tra quyền add_info
+            $permCheck = restrictAccess('add_flight', true);
+            if (!$permCheck['success']) {
+                $response = $permCheck;
+                break;
+            }
+
             if (!isset($data['IATA'], $data['flight_number'], $data['departure_date'], $data['departure_airport'], $data['arrival_airport'], $data['departure_time'], $data['arrival_time'], $data['price'], $data['status_flight'], $data['total_seat'])) {
                 $response["message"] = "Thiếu dữ liệu chuyến bay!";
                 break;
@@ -91,6 +100,7 @@ if (isset($data['action'])) {
             $price = $data['price'];
             $status_flight = $data['status_flight'];
             $total_seat = $data['total_seat'];
+            $available_seats = $total_seat;
 
             // Kiểm tra mã chuyến bay có trùng không
             $checkSql = "SELECT flight_number FROM flights WHERE flight_number = ?";
@@ -105,9 +115,9 @@ if (isset($data['action'])) {
             }
             $checkStmt->close();
 
-            $sql = "INSERT INTO flights (IATA_code_airline, flight_number, departure_date, departure_airport, arrival_airport, departure_time, arrival_time, price, status_flight, total_seat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO flights (IATA_code_airline, flight_number, departure_date, departure_airport, arrival_airport, departure_time, arrival_time, price, status_flight, total_seat, available_seats) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssssssssi", $IATA, $flight_number, $departure_date, $departure_airport, $arrival_airport, $departure_time, $arrival_time, $price, $status_flight, $total_seat);
+            $stmt->bind_param("sssssssssii", $IATA, $flight_number, $departure_date, $departure_airport, $arrival_airport, $departure_time, $arrival_time, $price, $status_flight, $total_seat, $available_seats);
 
             if ($stmt->execute()) {
                 $response["success"] = true;
@@ -118,6 +128,13 @@ if (isset($data['action'])) {
             break;
 
         case "update":
+            // Kiểm tra quyền add_info
+            $permCheck = restrictAccess('edit_flight', true);
+            if (!$permCheck['success']) {
+                $response = $permCheck;
+                break;
+            }
+
             if (!isset($data['id'], $data['IATA'], $data['flight_number'], $data['departure_date'], $data['departure_airport'], $data['arrival_airport'], $data['departure_time'], $data['arrival_time'], $data['price'], $data['status_flight'], $data['total_seat'])) {
                 $response["message"] = "Thiếu dữ liệu chuyến bay để cập nhật!";
                 break;
@@ -135,20 +152,41 @@ if (isset($data['action'])) {
             $status_flight = $data['status_flight'];
             $total_seat = $data['total_seat'];
 
-            $sql = "UPDATE flights SET IATA_code_airline = ?, flight_number = ?, departure_date = ?, departure_airport = ?, arrival_airport = ?, departure_time = ?, arrival_time = ?, price = ?, status_flight = ?, total_seat = ? WHERE flight_id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssssssssii", $IATA, $flight_number, $departure_date, $departure_airport, $arrival_airport, $departure_time, $arrival_time, $price, $status_flight, $total_seat, $id);
+            // Lấy số ghế đã đặt để đảm bảo available_seats hợp lệ
+            $sql_booked = "SELECT COUNT(*) as booked_seats FROM booking_seat bs JOIN bookings b ON bs.booking_id = b.booking_id WHERE b.flight_id = ? AND b.status_bookings NOT IN ('cancelled')";
+            $stmt_booked = $conn->prepare($sql_booked);
+            $stmt_booked->bind_param("i", $id);
+            $stmt_booked->execute();
+            $result_booked = $stmt_booked->get_result();
+            $booked_seats = $result_booked->fetch_assoc()['booked_seats'];
+            $available_seats = $total_seat - $booked_seats;
 
-            if ($stmt->execute()) {
-                $response["success"] = true;
-                $response["message"] = "Cập nhật chuyến bay thành công!";
-            } else {
-                $response["message"] = "Lỗi khi cập nhật chuyến bay: " . $stmt->error;
-                file_put_contents("log.txt", "Lỗi SQL khi cập nhật chuyến bay: " . $stmt->error . "\n", FILE_APPEND);
+            if ($available_seats < 0) {
+                $response["message"] = "Số ghế tổng không đủ để chứa số ghế đã đặt!";
+                break;
             }
-            break;
+    
+                $sql = "UPDATE flights SET IATA_code_airline = ?, flight_number = ?, departure_date = ?, departure_airport = ?, arrival_airport = ?, departure_time = ?, arrival_time = ?, price = ?, status_flight = ?, total_seat = ?, available_seats = ? WHERE flight_id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sssssssssiii", $IATA, $flight_number, $departure_date, $departure_airport, $arrival_airport, $departure_time, $arrival_time, $price, $status_flight, $total_seat, $available_seats, $id);
+    
+                if ($stmt->execute()) {
+                    $response["success"] = true;
+                    $response["message"] = "Cập nhật chuyến bay thành công!";
+                } else {
+                    $response["message"] = "Lỗi khi cập nhật chuyến bay: " . $stmt->error;
+                    file_put_contents("log.txt", "Lỗi SQL khi cập nhật chuyến bay: " . $stmt->error . "\n", FILE_APPEND);
+                }
+                break;
 
         case "delete":
+            // Kiểm tra quyền add_info
+            $permCheck = restrictAccess('delete_flight', true);
+            if (!$permCheck['success']) {
+                $response = $permCheck;
+                break;
+            }
+
             if (!isset($data['id'])) {
                 $response["message"] = "Thiếu ID chuyến bay để xóa!";
                 break;

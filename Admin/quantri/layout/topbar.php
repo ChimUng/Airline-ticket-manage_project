@@ -10,10 +10,10 @@
 <form
     class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
     <div class="input-group">
-        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+        <input type="text" id="global-search" class="form-control bg-light border-0 small" placeholder="Tìm kiếm danh sách, thêm ..."
             aria-label="Search" aria-describedby="basic-addon2">
         <div class="input-group-append">
-            <button class="btn btn-primary" type="button">
+            <button class="btn btn-primary" type="button" id="global-search-btn">
                 <i class="fas fa-search fa-sm"></i>
             </button>
         </div>
@@ -100,19 +100,60 @@
 
     <!-- Nav Item - Messages -->
     <li class="nav-item dropdown no-arrow mx-1">
+        <?php
+            // Kết nối database và lấy dữ liệu reviews
+            require($_SERVER['DOCUMENT_ROOT'] . '/banvemaybay/Admin/quantri/db/conn.php');
+            $query = "SELECT r.*, u.username, f.flight_number 
+                    FROM reviews r 
+                    JOIN users u ON r.user_id = u.user_id 
+                    JOIN flights f ON r.flight_id = f.flight_id 
+                    ORDER BY r.create_at_reviews DESC 
+                    LIMIT 4";
+            $result = $conn->query($query);
+            $reviewCount = $result->num_rows;
+        ?>
         <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-envelope fa-fw"></i>
+            <i class="fas fa-star fa-fw"></i>
             <!-- Counter - Messages -->
-            <span class="badge badge-danger badge-counter">7</span>
+            <span class="badge badge-danger badge-counter"><?= $reviewCount > 0 ? $reviewCount : '' ?></span>
         </a>
         <!-- Dropdown - Messages -->
         <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
             aria-labelledby="messagesDropdown">
             <h6 class="dropdown-header">
-                Message Center
+                Đánh giá mới nhất
             </h6>
-            <a class="dropdown-item d-flex align-items-center" href="#">
+            <?php if ($reviewCount > 0): ?>
+                <?php while ($review = $result->fetch_assoc()): ?>
+                    <a class="dropdown-item d-flex align-items-center" href="#" onclick="event.preventDefault()">
+                        <div class="mr-3">
+                            <div class="icon-circle bg-<?= 
+                                $review['rating'] >= 4 ? 'success' : 
+                                ($review['rating'] >= 2 ? 'warning' : 'danger') 
+                            ?>">
+                                <i class="fas fa-star text-white"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="small text-gray-500">
+                                <?= date('d/m/Y H:i', strtotime($review['create_at_reviews'])) ?> | 
+                                Chuyến bay: <?= htmlspecialchars($review['flight_number']) ?>
+                            </div>
+                            <span class="font-weight-bold"><?= htmlspecialchars($review['username']) ?>: 
+                                <?= str_repeat('⭐', $review['rating']) ?>
+                            </span>
+                            <div class="text-truncate"><?= htmlspecialchars($review['comment']) ?></div>
+                        </div>
+                    </a>
+            <?php endwhile; ?>
+            <a class="dropdown-item text-center small text-gray-500" href="#" data-toggle="modal" data-target="#allReviewsModal">
+                Xem tất cả đánh giá
+            </a>
+            <?php else: ?>
+                <a class="dropdown-item text-center small text-gray-500">Không có đánh giá nào</a>
+            <?php endif; ?>
+            <!-- <a class="dropdown-item d-flex align-items-center" href="#">
                 <div class="dropdown-list-image mr-3">
                     <img class="rounded-circle" src="img/undraw_profile_1.svg"
                         alt="...">
@@ -159,8 +200,8 @@
                         told me that people say this to all dogs, even if they aren't good...</div>
                     <div class="small text-gray-500">Chicken the Dog · 2w</div>
                 </div>
-            </a>
-            <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+            </a> -->
+            <!-- <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a> -->
         </div>
     </li>
 
@@ -201,3 +242,53 @@
 
 </nav>
 <!-- End of Topbar -->
+
+<!-- Modal hiển thị tất cả reviews -->
+<div class="modal fade" id="allReviewsModal" tabindex="-1" role="dialog" aria-labelledby="allReviewsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="allReviewsModalLabel">Tất cả đánh giá</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    <?php
+                    // Lấy tất cả reviews từ database
+                    $allReviewsQuery = "SELECT r.*, u.username, f.flight_number 
+                                      FROM reviews r 
+                                      JOIN users u ON r.user_id = u.user_id 
+                                      JOIN flights f ON r.flight_id = f.flight_id 
+                                      ORDER BY r.create_at_reviews DESC";
+                    $allReviewsResult = $conn->query($allReviewsQuery);
+                    
+                    if ($allReviewsResult->num_rows > 0):
+                        while ($review = $allReviewsResult->fetch_assoc()):
+                    ?>
+                        <div class="list-group-item list-group-item-action flex-column align-items-start mb-2">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">
+                                    <?= htmlspecialchars($review['username']) ?> 
+                                    <small><?= str_repeat('⭐', $review['rating']) ?></small>
+                                </h5>
+                                <small><?= date('d/m/Y H:i', strtotime($review['create_at_reviews'])) ?></small>
+                            </div>
+                            <p class="mb-1">Chuyến bay: <?= htmlspecialchars($review['flight_number']) ?></p>
+                            <p class="mb-1"><?= htmlspecialchars($review['comment']) ?></p>
+                        </div>
+                    <?php
+                        endwhile;
+                    else:
+                    ?>
+                        <p class="text-center text-muted">Không có đánh giá nào</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>

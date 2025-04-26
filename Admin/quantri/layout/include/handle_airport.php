@@ -1,5 +1,7 @@
 <?php
 require('../../db/conn.php');
+include $_SERVER['DOCUMENT_ROOT'] . '/banvemaybay/Admin/quantri/layout/include/auth_middleware.php';
+
 // Bật chế độ hiển thị lỗi để dễ dàng gỡ lỗi
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -28,6 +30,13 @@ if (isset($data['action'])) {
     switch ($data['action']) {
         // Thêm trường hợp "delete" để xóa sân bay
         case "delete":
+            // Kiểm tra quyền add_info
+            $permCheck = restrictAccess('delete_airport', true);
+            if (!$permCheck['success']) {
+                $response = $permCheck;
+                break;
+            }
+
             $id = $data['id'];
             $sql = "DELETE FROM airports WHERE airport_id = ?";
             $stmt = $conn->prepare($sql);
@@ -52,6 +61,13 @@ if (isset($data['action'])) {
             break;
         // Thêm trường hợp "add" để thêm sân bay mới
         case "add":
+            // Kiểm tra quyền add_info
+            $permCheck = restrictAccess('add_airport', true);
+            if (!$permCheck['success']) {
+                $response = $permCheck;
+                break;
+            }
+
             if (!isset($data['IATA'], $data['name_airport'], $data['city'], $data['status_airport'])) {
                 $response["message"] = "Thiếu dữ liệu!";
                 break;
@@ -89,6 +105,13 @@ if (isset($data['action'])) {
             break;        
         // Thêm trường hợp "update" để cập nhật thông tin sân bay
         case "update":
+            // Kiểm tra quyền add_info
+            $permCheck = restrictAccess('edit_airport', true);
+            if (!$permCheck['success']) {
+                $response = $permCheck;
+                break;
+            }
+
             $id = $data['id'];
             $IATA = $data['IATA'];
             $name = $data['name_airport'];

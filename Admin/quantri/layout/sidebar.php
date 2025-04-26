@@ -16,7 +16,7 @@
     <li class="nav-item active">
         <a class="nav-link" href="index.php">
             <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a>
+            <span>Jack 97</span></a>
     </li>
 
     <!-- Divider -->
@@ -150,6 +150,13 @@
         <a class="nav-link" href="layout/listuser.php">
             <i class="fas fa-fw fa-table"></i>
             <span>Tables users</span></a>
+    </li>
+
+    <!-- Nav Item - Permissions Management(Quản lý phân quyền)-->
+    <li class="nav-item">
+        <a class="nav-link" href="layout/manage_permissions.php">
+            <i class="fas fa-fw fa-user-lock"></i>
+            <span>Quản lí phân quyền</span></a>
     </li>
 
     <!-- Divider(đường gachj dưới) -->

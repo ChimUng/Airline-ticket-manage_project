@@ -1,5 +1,6 @@
 <?php
 require('../../db/conn.php');
+include $_SERVER['DOCUMENT_ROOT'] . '/banvemaybay/Admin/quantri/layout/include/auth_middleware.php';
 
 // Bật chế độ debug
 error_reporting(E_ALL);
@@ -80,7 +81,20 @@ switch ($action) {
             break;
 
     case "add":
+        // Kiểm tra quyền add_airline
+        $permCheck = restrictAccess('add_airline', true);
+        if (!$permCheck['success']) {
+            $response = $permCheck;
+            break;
+        }
     case "update":
+        // Kiểm tra quyền add_info
+        $permCheck = restrictAccess('edit_airline', true);
+        if (!$permCheck['success']) {
+            $response = $permCheck;
+            break;
+        }
+
         $is_add = ($action === "add");
 
         // Validate input
@@ -194,6 +208,13 @@ switch ($action) {
         break;
 
     case "delete":
+        // Kiểm tra quyền add_info
+        $permCheck = restrictAccess('delete_airline', true);
+        if (!$permCheck['success']) {
+            $response = $permCheck;
+            break;
+        }
+
         if (!isset($_POST['airline_id'])) {
             $response["message"] = "Thiếu ID hãng hàng không.";
             break;

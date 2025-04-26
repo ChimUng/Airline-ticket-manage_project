@@ -23,6 +23,24 @@ function showNotification(message, type = "success") {
     if (type === "success") setTimeout(() => modal.modal("hide"), 3000);
 }
 
+// Hàm hiển thị ảnh tạm thời khi chọn file
+function previewImage(input, previewElementId) {
+    const file = input.files[0];
+    const preview = document.getElementById(previewElementId);
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+}
+
 // Hàm khởi tạo danh sách hãng bay
 (function($) {
     function initAirlineList(options) {
@@ -123,14 +141,15 @@ function addAirline(event) {
         showNotification(data.message, data.success ? "success" : "error");
         if (data.success) {
             form.reset();
-            // Kiểm tra sự tồn tại của loadAirlines
+            document.getElementById('logo-preview').src = '';
+            document.getElementById('logo-preview').style.display = 'none';
             if (typeof loadAirlines === 'function') {
                 loadAirlines(1);
             } else {
                 console.warn("loadAirlines không được định nghĩa. Chuyển hướng về danh sách hãng bay.");
                 setTimeout(() => {
                     window.location.href = '/banvemaybay/Admin/quantri/layout/listairline.php';
-                }, 2000); // Chờ 2 giây để người dùng thấy thông báo
+                }, 2000);
             }
         }
     })
@@ -194,7 +213,6 @@ function confirmDeleteAirline() {
     $("#confirmDeleteModal").modal("hide");
     deleteAirlineId = null;
 }
-
 // Hàm chỉnh sửa hãng bay
 function editAirline(id) {
     const formData = new FormData();
@@ -212,6 +230,8 @@ function editAirline(id) {
             $("#edit-IATA").val(data.airline.IATA_code_airline);
             $("#edit-name").val(data.airline.airline_name);
             $("#current_logo").attr("src", data.airline.airline_logo);
+            $("#edit-logo-preview").attr("src", data.airline.airline_logo);
+            $("#edit-logo-preview").css("display", "block");
             $("#old_airline_logo").val(data.airline.airline_logo);
             $("#editModal").modal("show");
         } else {
@@ -224,6 +244,16 @@ function editAirline(id) {
 // Xử lý khi tài liệu sẵn sàng
 $(document).ready(function() {
     $("#add-airline-form").on("submit", addAirline);
+
+    // Xử lý preview ảnh khi chọn file trong form thêm
+    $("#airline_logo").on("change", function() {
+        previewImage(this, "logo-preview");
+    });
+
+    // Xử lý preview ảnh khi chọn file trong modal chỉnh sửa
+    $("#edit-form input[name='airline_logo']").on("change", function() {
+        previewImage(this, "edit-logo-preview");
+    });
 
     $('#confirmDeleteBtn').click(function() {
         confirmDeleteAirline();
@@ -251,6 +281,8 @@ $(document).ready(function() {
 
     $('#editModal').on('hidden.bs.modal', function() {
         $('#edit-form')[0].reset();
+        $("#edit-logo-preview").attr("src", "");
+        $("#edit-logo-preview").css("display", "none");
     });
 
     $(document).on('click', '.view-detail-btn', function() {

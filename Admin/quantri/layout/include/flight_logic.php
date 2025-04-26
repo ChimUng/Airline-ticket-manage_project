@@ -49,7 +49,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
         }
 
         // Xử lý phân trang, lọc, tìm kiếm, sắp xếp
-        $itemsPerPage = 5; // Số chuyến bay trên mỗi trang
+        $itemsPerPage = 5;
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $offset = ($page - 1) * $itemsPerPage;
 
@@ -59,6 +59,15 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             throw new Exception('Giá trị trạng thái không hợp lệ: ' . $statusFilter);
         }
         $statusCondition = $statusFilter !== '' ? "AND f.status_flight = ?" : "";
+
+        // Lọc theo thời gian
+        $timeFilter = isset($_GET['time']) ? $_GET['time'] : '';
+        $timeCondition = "";
+        if ($timeFilter === 'current') {
+            $timeCondition = "AND CONCAT(f.departure_date, ' ', f.departure_time) >= NOW()";
+        } elseif ($timeFilter === 'past') {
+            $timeCondition = "AND CONCAT(f.departure_date, ' ', f.departure_time) < NOW()";
+        }
 
         // Tìm kiếm
         $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -113,28 +122,39 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
         $orderBy = "ORDER BY $sortColumn $order";
 
         // Debug: Ghi lại truy vấn
-        $response['debug_query'] = "SELECT COUNT(*) as total FROM flights f WHERE 1=1 $statusCondition $searchCondition";
+        $response['debug_query'] = "SELECT COUNT(*) as total FROM flights f WHERE 1=1 $statusCondition $timeCondition $searchCondition";
 
         // Đếm tổng số chuyến bay để tính số trang
         $countQuery = "
             SELECT COUNT(*) as total
             FROM flights f
-            WHERE 1=1 $statusCondition $searchCondition
+            WHERE 1=1 $statusCondition $timeCondition $searchCondition
         ";
         $stmt = $conn->prepare($countQuery);
         if (!$stmt) {
             throw new Exception('Lỗi chuẩn bị truy vấn đếm: ' . $conn->error);
         }
-        if ($statusFilter !== '' && $isSearchById) {
-            $stmt->bind_param("si", $statusFilter, $searchParam);
-        } elseif ($statusFilter !== '' && $search) {
-            $stmt->bind_param("sssss", $statusFilter, $searchParam, $searchParam, $searchParam, $searchParam);
-        } elseif ($statusFilter !== '') {
-            $stmt->bind_param("s", $statusFilter);
-        } elseif ($isSearchById) {
-            $stmt->bind_param("i", $searchParam);
+        $bindParams = [];
+        $bindTypes = "";
+        if ($statusFilter !== '') {
+            $bindTypes .= "s";
+            $bindParams[] = $statusFilter;
+        }
+        if ($timeFilter !== '') {
+            // Không cần tham số thêm cho bộ lọc thời gian vì sử dụng NOW()
+        }
+        if ($isSearchById) {
+            $bindTypes .= "i";
+            $bindParams[] = $searchParam;
         } elseif ($search) {
-            $stmt->bind_param("ssss", $searchParam, $searchParam, $searchParam, $searchParam);
+            $bindTypes .= "ssss";
+            $bindParams[] = $searchParam;
+            $bindParams[] = $searchParam;
+            $bindParams[] = $searchParam;
+            $bindParams[] = $searchParam;
+        }
+        if ($bindTypes) {
+            $stmt->bind_param($bindTypes, ...$bindParams);
         }
         if (!$stmt->execute()) {
             throw new Exception('Lỗi thực thi truy vấn đếm: ' . $stmt->error);
@@ -146,13 +166,13 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
         $response['debug_totalItems'] = $totalItems;
 
         // Debug: Ghi lại truy vấn chính
-        $response['debug_query_main'] = "SELECT f.* FROM flights f WHERE 1=1 $statusCondition $searchCondition $orderBy LIMIT $itemsPerPage OFFSET $offset";
+        $response['debug_query_main'] = "SELECT f.* FROM flights f WHERE 1=1 $statusCondition $timeCondition $searchCondition $orderBy LIMIT $itemsPerPage OFFSET $offset";
 
         // Lấy dữ liệu chuyến bay cho trang hiện tại
         $query = "
             SELECT f.*
             FROM flights f
-            WHERE 1=1 $statusCondition $searchCondition
+            WHERE 1=1 $statusCondition $timeCondition $searchCondition
             $orderBy
             LIMIT ? OFFSET ?
         ";
@@ -160,19 +180,26 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
         if (!$stmt) {
             throw new Exception('Lỗi chuẩn bị truy vấn chính: ' . $conn->error);
         }
-        if ($statusFilter !== '' && $isSearchById) {
-            $stmt->bind_param("siii", $statusFilter, $searchParam, $itemsPerPage, $offset);
-        } elseif ($statusFilter !== '' && $search) {
-            $stmt->bind_param("sssssii", $statusFilter, $searchParam, $searchParam, $searchParam, $searchParam, $itemsPerPage, $offset);
-        } elseif ($statusFilter !== '') {
-            $stmt->bind_param("sii", $statusFilter, $itemsPerPage, $offset);
-        } elseif ($isSearchById) {
-            $stmt->bind_param("iii", $searchParam, $itemsPerPage, $offset);
-        } elseif ($search) {
-            $stmt->bind_param("ssssii", $searchParam, $searchParam, $searchParam, $searchParam, $itemsPerPage, $offset);
-        } else {
-            $stmt->bind_param("ii", $itemsPerPage, $offset);
+        $bindParams = [];
+        $bindTypes = "";
+        if ($statusFilter !== '') {
+            $bindTypes .= "s";
+            $bindParams[] = $statusFilter;
         }
+        if ($isSearchById) {
+            $bindTypes .= "i";
+            $bindParams[] = $searchParam;
+        } elseif ($search) {
+            $bindTypes .= "ssss";
+            $bindParams[] = $searchParam;
+            $bindParams[] = $searchParam;
+            $bindParams[] = $searchParam;
+            $bindParams[] = $searchParam;
+        }
+        $bindTypes .= "ii";
+        $bindParams[] = $itemsPerPage;
+        $bindParams[] = $offset;
+        $stmt->bind_param($bindTypes, ...$bindParams);
         if (!$stmt->execute()) {
             throw new Exception('Lỗi thực thi truy vấn chính: ' . $stmt->error);
         }
@@ -199,6 +226,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                 echo '<td>' . htmlspecialchars($flight['price']) . '</td>';
                 echo '<td><span class="badge ' . getStatusBadgeClass($flight['status_flight']) . '">' . getStatusText($flight['status_flight']) . '</span></td>';
                 echo '<td>' . htmlspecialchars($flight['total_seat']) . '</td>';
+                echo '<td>' . htmlspecialchars($flight['available_seats']) . '</td>';
                 echo '<td>' . renderActionButtons($flight['flight_id']) . '</td>';
                 echo '</tr>';
             }
@@ -248,6 +276,14 @@ $offset = ($page - 1) * $itemsPerPage;
 
 $statusFilter = isset($_GET['status']) ? $_GET['status'] : '';
 $statusCondition = $statusFilter !== '' ? "AND f.status_flight = ?" : "";
+
+$timeFilter = isset($_GET['time']) ? $_GET['time'] : '';
+$timeCondition = "";
+if ($timeFilter === 'current') {
+    $timeCondition = "AND CONCAT(f.departure_date, ' ', f.departure_time) >= NOW()";
+} elseif ($timeFilter === 'past') {
+    $timeCondition = "AND CONCAT(f.departure_date, ' ', f.departure_time) < NOW()";
+}
 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $isSearchById = $search !== '' && ctype_digit($search);
@@ -302,19 +338,27 @@ $orderBy = "ORDER BY $sortColumn $order";
 $countQuery = "
     SELECT COUNT(*) as total
     FROM flights f
-    WHERE 1=1 $statusCondition $searchCondition
+    WHERE 1=1 $statusCondition $timeCondition $searchCondition
 ";
 $stmt = $conn->prepare($countQuery);
-if ($statusFilter !== '' && $isSearchById) {
-    $stmt->bind_param("si", $statusFilter, $searchParam);
-} elseif ($statusFilter !== '' && $search) {
-    $stmt->bind_param("sssss", $statusFilter, $searchParam, $searchParam, $searchParam, $searchParam);
-} elseif ($statusFilter !== '') {
-    $stmt->bind_param("s", $statusFilter);
-} elseif ($isSearchById) {
-    $stmt->bind_param("i", $searchParam);
+$bindParams = [];
+$bindTypes = "";
+if ($statusFilter !== '') {
+    $bindTypes .= "s";
+    $bindParams[] = $statusFilter;
+}
+if ($isSearchById) {
+    $bindTypes .= "i";
+    $bindParams[] = $searchParam;
 } elseif ($search) {
-    $stmt->bind_param("ssss", $searchParam, $searchParam, $searchParam, $searchParam);
+    $bindTypes .= "ssss";
+    $bindParams[] = $searchParam;
+    $bindParams[] = $searchParam;
+    $bindParams[] = $searchParam;
+    $bindParams[] = $searchParam;
+}
+if ($bindTypes) {
+    $stmt->bind_param($bindTypes, ...$bindParams);
 }
 $stmt->execute();
 $totalItems = $stmt->get_result()->fetch_assoc()['total'];
@@ -323,24 +367,31 @@ $totalPages = ceil($totalItems / $itemsPerPage);
 $query = "
     SELECT f.*
     FROM flights f
-    WHERE 1=1 $statusCondition $searchCondition
+    WHERE 1=1 $statusCondition $timeCondition $searchCondition
     $orderBy
     LIMIT ? OFFSET ?
 ";
 $stmt = $conn->prepare($query);
-if ($statusFilter !== '' && $isSearchById) {
-    $stmt->bind_param("siii", $statusFilter, $searchParam, $itemsPerPage, $offset);
-} elseif ($statusFilter !== '' && $search) {
-    $stmt->bind_param("sssssii", $statusFilter, $searchParam, $searchParam, $searchParam, $searchParam, $itemsPerPage, $offset);
-} elseif ($statusFilter !== '') {
-    $stmt->bind_param("sii", $statusFilter, $itemsPerPage, $offset);
-} elseif ($isSearchById) {
-    $stmt->bind_param("iii", $searchParam, $itemsPerPage, $offset);
-} elseif ($search) {
-    $stmt->bind_param("ssssii", $searchParam, $searchParam, $searchParam, $searchParam, $itemsPerPage, $offset);
-} else {
-    $stmt->bind_param("ii", $itemsPerPage, $offset);
+$bindParams = [];
+$bindTypes = "";
+if ($statusFilter !== '') {
+    $bindTypes .= "s";
+    $bindParams[] = $statusFilter;
 }
+if ($isSearchById) {
+    $bindTypes .= "i";
+    $bindParams[] = $searchParam;
+} elseif ($search) {
+    $bindTypes .= "ssss";
+    $bindParams[] = $searchParam;
+    $bindParams[] = $searchParam;
+    $bindParams[] = $searchParam;
+    $bindParams[] = $searchParam;
+}
+$bindTypes .= "ii";
+$bindParams[] = $itemsPerPage;
+$bindParams[] = $offset;
+$stmt->bind_param($bindTypes, ...$bindParams);
 $stmt->execute();
 $flights = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 

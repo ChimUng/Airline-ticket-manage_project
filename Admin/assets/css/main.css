@@ -70,3 +70,185 @@
     padding: 0.5em 0.75em;
     font-size: 0.875em;
 }
+
+.ui-autocomplete {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #ddd !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    z-index: 1000;
+}
+
+.ui-autocomplete .ui-menu-item {
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #fff; /* Màu nền mặc định */
+    border: none !important;
+}
+
+/* Đảm bảo wrapper không có màu nền dư thừa */
+.ui-autocomplete .ui-menu-item-wrapper {
+    padding: 0;
+    border: none !important;
+    background-color: transparent !important; /* Đặt lại màu nền cho wrapper */
+}
+
+/* Khi hover hoặc trạng thái active */
+.ui-autocomplete .ui-menu-item:hover,
+.ui-autocomplete .ui-state-active,
+.ui-autocomplete .ui-state-focus {
+    background-color: #f1f1f1 !important; /* Màu xám nhạt khi hover hoặc active */
+    color: #333 !important;
+}
+
+/* Đảm bảo trạng thái không hover/active/focus đặt lại màu nền */
+.ui-autocomplete .ui-menu-item:not(:hover):not(.ui-state-active):not(.ui-state-focus) {
+    background-color: #fff !important;
+}
+
+.ui-autocomplete .ui-menu-item:not(:hover):not(.ui-state-active):not(.ui-state-focus) .ui-menu-item-wrapper {
+    background-color: transparent !important;
+}
+
+/* Tùy chỉnh kích thước modal phân quyền */
+#permissionModal .modal-xl {
+    max-width: 90%; /* Chiếm 90% chiều rộng màn hình */
+    width: 90%;
+}
+
+/* Đảm bảo nội dung bên trong không bị quá chật */
+#permissionModal .modal-body {
+    padding: 20px;
+}
+
+/* Căn giữa và điều chỉnh khoảng cách giữa các cột */
+#permissionModal .row {
+    display: flex;
+    justify-content: space-between; /* Căn đều các cột */
+}
+
+/* Tùy chỉnh kích thước và khoảng cách của mỗi cột */
+#permissionModal .row > div {
+    flex: 1; /* Mỗi cột chiếm đều không gian */
+    min-width: 180px; /* Đảm bảo cột không bị quá hẹp */
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-bottom: 15px;
+}
+
+/* Đảm bảo tiêu đề của cột không bị lệch */
+#permissionModal .row > div h6 {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+/* Đảm bảo các checkbox không bị lệch */
+#permissionModal .form-check {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+/* Đảm bảo nhãn của checkbox không bị tràn */
+#permissionModal .form-check-label {
+    margin-left: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:root {
+    --blue: #1DC677; /* Thay màu xanh (#4e73df) bằng màu đỏ (#dc3545), hoặc màu bạn muốn */
+    --primary: #1DC677; /* Đổi màu chính */
+    --indigo: #6610f2;
+    --purple: #6f42c1;
+    --pink: #e83e8c;
+    --red: #dc3545;
+    --orange: #fd7e14;
+    --yellow: #f6c23e;
+    --green: #1cc88a;
+    --teal: #20c9a6;
+    --cyan: #36b9cc;
+}
+
+.bg-gradient-primary {
+    background-color: var(--primary) !important;
+    background-image: linear-gradient(180deg, var(--primary) 10%, #22a9b5 100%) !important;
+}  
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover {
+    background-color: #10a05d;
+    border-color: #10a05d;
+}
+
+.btn-primary:focus, .btn-primary.focus {
+    color: #fff;
+    background-color: #10a05d;
+    border-color: #10a05d;
+    box-shadow: 0 0 0 0.2rem rgba(105, 228, 193, 0.5);
+}
+
+.btn-primary.disabled, .btn-primary:disabled {
+    color: #fff;
+    background-color: #10a05d;
+    border-color: #10a05d;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
+.show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #25e38ac5;
+    border-color: var(--primary);
+}
+
+.text-primary {
+    color: var(--primary)!important;
+}
+
+a.text-primary:hover, a.text-primary:focus {
+    color: #25e38ac5!important;
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+    background-color: transparent;
+}
+
+a:hover {
+    color: #10a05d;
+    text-decoration: underline;
+}
+
+.page-item.active .page-link {
+    z-index: 33;
+    color: #fff;
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.page-link {
+    color: var(--primary);
+}
+
+.border-left-primary {
+    border-left: 0.25rem solid #2ab580c5 !important;
+}
+
+.border-left-primary {
+    border-left: 0.25rem solid #96b528e8 !important;
+}
+
+.topbar .dropdown-list .dropdown-header {
+    background-color: var(--primary);
+    border: var(--primary);
+}

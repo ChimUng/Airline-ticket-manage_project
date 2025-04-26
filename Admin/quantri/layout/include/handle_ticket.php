@@ -1,5 +1,6 @@
 <?php
 require('../../db/conn.php');
+include $_SERVER['DOCUMENT_ROOT'] . '/banvemaybay/Admin/quantri/layout/include/auth_middleware.php';
 
 // Bật chế độ hiển thị lỗi để dễ dàng gỡ lỗi
 error_reporting(E_ALL);
@@ -57,6 +58,13 @@ if (isset($data['action'])) {
             break;
 
         case "add":
+            // Kiểm tra quyền add_info
+            $permCheck = restrictAccess('add_ticket', true);
+            if (!$permCheck['success']) {
+                $response = $permCheck;
+                break;
+            }
+            
             // Thêm hành khách mới
             if (!isset($data['booking_id'], $data['full_name'], $data['phone'], $data['birth_date'], $data['gender'], $data['passport_number'], $data['ticket_type'])) {
                 $response["message"] = "Thiếu dữ liệu!";
@@ -84,6 +92,13 @@ if (isset($data['action'])) {
             break;
 
         case "update":
+            // Kiểm tra quyền add_info
+            $permCheck = restrictAccess('edit_ticket', true);
+            if (!$permCheck['success']) {
+                $response = $permCheck;
+                break;
+            }
+
             // Cập nhật thông tin hành khách
             if (!isset($data['passenger_id'], $data['booking_id'], $data['full_name'], $data['phone'], $data['birth_date'], $data['gender'], $data['passport_number'], $data['ticket_type'])) {
                 $response["message"] = "Thiếu dữ liệu!";
@@ -112,6 +127,13 @@ if (isset($data['action'])) {
             break;
 
         case "delete":
+            // Kiểm tra quyền add_info
+            $permCheck = restrictAccess('delete_ticket', true);
+            if (!$permCheck['success']) {
+                $response = $permCheck;
+                break;
+            }
+
             // Xóa hành khách
             $id = $data['passenger_id'];
             $sql = "DELETE FROM passengers WHERE passenger_id = ?";

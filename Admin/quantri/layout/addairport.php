@@ -1,6 +1,12 @@
 <?php
-    require('header.php');
+    
     require('../db/conn.php'); // Đảm bảo đường dẫn đúng
+    include $_SERVER['DOCUMENT_ROOT'] . '/banvemaybay/Admin/quantri/layout/include/auth_middleware.php';
+
+    // Kiểm tra quyền truy cập chức năng "add_airport"
+    restrictAccess('add_airport');
+
+    require('header.php');
 ?>
 <div class="container">
     <div class="card o-hidden border-0 shadow-lg my-5">
@@ -47,7 +53,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/banvemaybay/Admin/assets/js/main.js"></script>
     <script>
     $(document).ready(function() {

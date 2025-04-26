@@ -1,5 +1,7 @@
 <?php
 require('../../db/conn.php');
+include $_SERVER['DOCUMENT_ROOT'] . '/banvemaybay/Admin/quantri/layout/include/auth_middleware.php';
+
 header('Content-Type: application/json');
 
 $response = ['success' => false, 'error' => ''];
@@ -63,9 +65,9 @@ try {
         
         $conn->begin_transaction();
         
-        // Lấy trạng thái hiện tại
+        // Lấy trạng thái hiện tại và flight_id
         $stmt = $conn->prepare("
-            SELECT b.status_bookings, b.payment_status 
+            SELECT b.status_bookings, b.payment_status, b.flight_id 
             FROM bookings b
             WHERE b.booking_id = ?
         ");
@@ -89,15 +91,11 @@ try {
         $stmt->execute();
         $payment = $stmt->get_result()->fetch_assoc();
         
-        // Xác định newPaymentStatus chính xác hơn
-        if ($payment['payment_status'] === 'Success') {
+        // Xác định newPaymentStatus và newStatus
+        if ($payment && $payment['payment_status'] === 'Success') {
             $newPaymentStatus = 'paid';
-            if ($currentStatus === 'pending') {
-                $newStatus = 'paid';
-            } else {
-                $newStatus = $currentStatus;
-            }
-        } elseif ($payment['payment_status'] === 'Fail') {
+            $newStatus = ($currentStatus === 'pending') ? 'paid' : $currentStatus;
+        } elseif ($payment && $payment['payment_status'] === 'Fail') {
             $newPaymentStatus = 'failed';
             $newStatus = 'pending';
         } else {
@@ -108,6 +106,12 @@ try {
         // Xử lý hành động
         switch ($action) {
             case 'issue': // Admin xác nhận in vé
+                // Kiểm tra quyền issue_booking
+                $permCheck = restrictAccess('issue_booking', true);
+                if (!$permCheck['success']) {
+                    throw new Exception($permCheck['message']);
+                }
+
                 if ($newPaymentStatus === 'paid' && $currentStatus === 'paid') {
                     $newStatus = 'issued';
                 } else {
@@ -115,29 +119,86 @@ try {
                 }
                 break;
             case 'cancel': // Người dùng hoặc admin hủy
+                // Kiểm tra quyền cancel_booking
+                $permCheck = restrictAccess('cancel_booking', true);
+                if (!$permCheck['success']) {
+                    throw new Exception($permCheck['message']);
+                }
+                
                 if ($currentStatus !== 'used') {
                     $newStatus = 'cancelled';
                     $newPaymentStatus = 'failed';
+                    $flightId = $booking['flight_id']; // Gán rõ ràng flightId
+                    error_log("Hủy booking $bookingId, flight_id: $flightId");
+
+                    // Lấy danh sách ghế liên quan đến booking
+                    $seatStmt = $conn->prepare("
+                        SELECT seat_id 
+                        FROM booking_seat 
+                        WHERE booking_id = ?
+                    ");
+                    $seatStmt->bind_param("s", $bookingId);
+                    $seatStmt->execute();
+                    $seats = $seatStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                    error_log("Danh sách ghế cho booking $bookingId: " . json_encode($seats));
+
+                    // Cập nhật trạng thái ghế và available_seats
+                    if (!empty($seats)) {
+                        foreach ($seats as $seat) {
+                            // Đặt lại is_booked = 0
+                            $updateSeatStmt = $conn->prepare("
+                                UPDATE seats 
+                                SET is_booked = 0 
+                                WHERE seat_id = ?
+                            ");
+                            $updateSeatStmt->bind_param("i", $seat['seat_id']);
+                            if (!$updateSeatStmt->execute()) {
+                                error_log("Lỗi khi cập nhật ghế {$seat['seat_id']}: " . $updateSeatStmt->error);
+                                throw new Exception("Lỗi khi cập nhật trạng thái ghế: " . $updateSeatStmt->error);
+                            }
+                        }
+
+                        // Tăng available_seats trong flights
+                        $numSeats = count($seats);
+                        error_log("Khôi phục $numSeats ghế cho chuyến bay $flightId");
+                        $updateFlightStmt = $conn->prepare("
+                            UPDATE flights 
+                            SET available_seats = available_seats + ? 
+                            WHERE flight_id = ?
+                        ");
+                        $updateFlightStmt->bind_param("ii", $numSeats, $flightId);
+                        if (!$updateFlightStmt->execute()) {
+                            error_log("Lỗi khi cập nhật số ghế trống cho chuyến bay $flightId: " . $updateFlightStmt->error);
+                            throw new Exception("Lỗi khi cập nhật số ghế trống: " . $updateFlightStmt->error);
+                        }
+                    } else {
+                        error_log("Không tìm thấy ghế cho booking $bookingId");
+                    }
                 } else {
                     throw new Exception("Không thể hủy booking đã sử dụng");
                 }
                 break;
         }
         
+        // Cập nhật trạng thái booking
         $stmt = $conn->prepare("
             UPDATE bookings 
             SET payment_status = ?, status_bookings = ? 
             WHERE booking_id = ?
         ");
         $stmt->bind_param("sss", $newPaymentStatus, $newStatus, $bookingId);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new Exception("Lỗi khi cập nhật trạng thái booking: " . $stmt->error);
+        }
         
         $conn->commit();
         $response['success'] = true;
+        $response['message'] = "Thao tác thành công!";
     }
 } catch (Exception $e) {
     $conn->rollback();
     $response['error'] = $e->getMessage();
+    error_log("Lỗi trong handle_booking.php: " . $e->getMessage());
 }
 echo json_encode($response);
 ?>

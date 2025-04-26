@@ -86,6 +86,7 @@ function checkAirportsNotSame(departureSelector, arrivalSelector) {
 
         window.loadFlights = function(page) {
             const status = $('#statusFilter').val();
+            const time = $('#timeFilter').val();
             const search = $('#searchInput').val().trim();
 
             // Kiểm tra giá trị status
@@ -94,10 +95,17 @@ function checkAirportsNotSame(departureSelector, arrivalSelector) {
                 return;
             }
 
+            // Kiểm tra giá trị time
+            if (time !== '' && !['current', 'past'].includes(time)) {
+                showNotification("Giá trị thời gian không hợp lệ!", "error");
+                return;
+            }
+
             // Cập nhật URL
             const url = new URL(window.location);
             url.searchParams.set('page', page);
             url.searchParams.set('status', status);
+            url.searchParams.set('time', time);
             url.searchParams.set('search', search);
             url.searchParams.set('sort', currentSort);
             url.searchParams.set('order', currentOrder);
@@ -112,6 +120,7 @@ function checkAirportsNotSame(departureSelector, arrivalSelector) {
                 data: {
                     page: page,
                     status: status,
+                    time: time,
                     search: search,
                     sort: currentSort,
                     order: currentOrder
@@ -138,7 +147,7 @@ function checkAirportsNotSame(departureSelector, arrivalSelector) {
         };
 
         // Xử lý lọc
-        $('#statusFilter').on('change', function() {
+        $('#statusFilter, #timeFilter').on('change', function() {
             loadFlights(1);
         });
 
@@ -335,6 +344,7 @@ function openEditFlightModal(id) {
                 $("#edit_price").val(flight.price);
                 $("#edit_status_flight").val(flight.status_flight);
                 $("#edit_total_seat").val(flight.total_seat);
+                $("#edit_available_seats").val(flight.available_seats);
                 $("#editFlightModal").modal("show");
             } else {
                 showNotification("Lỗi khi tải thông tin chuyến bay để chỉnh sửa: " + data.message, "error");

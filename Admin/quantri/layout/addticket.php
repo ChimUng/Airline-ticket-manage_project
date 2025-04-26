@@ -1,7 +1,13 @@
 <?php
-    require('header.php');
+    
     require('../db/conn.php'); // Đảm bảo đường dẫn đúng
+    include $_SERVER['DOCUMENT_ROOT'] . '/banvemaybay/Admin/quantri/layout/include/auth_middleware.php';
 
+    // Kiểm tra quyền truy cập chức năng "add_ticket"
+    restrictAccess('add_ticket');
+
+    require('header.php');
+    
     // Lấy danh sách booking_id từ bảng bookings
     $sql = "SELECT booking_id FROM bookings";
     $result = $conn->query($sql);
@@ -95,7 +101,8 @@
 </div>
 
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/banvemaybay/Admin/assets/js/main2.js"></script>
 <?php
     require('footer.php');

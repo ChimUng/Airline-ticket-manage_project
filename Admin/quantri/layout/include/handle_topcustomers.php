@@ -10,6 +10,7 @@ $action = $_SERVER['REQUEST_METHOD'] === 'POST' ?
     (isset($_GET['action']) ? $_GET['action'] : '');
 
 if ($action === 'get_top_customers') {
+    
     $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : null;
     $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : null;
     $sortOrder = isset($_POST['sortOrder']) ? $_POST['sortOrder'] : 'desc';

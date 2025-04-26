@@ -36,9 +36,9 @@ function getStatusText($status) {
 function renderActionButtons($status, $bookingId) {
     $buttons = '';
     if ($status === 'paid') {
-        $buttons .= '<button class="btn btn-sm btn-primary issue-btn" data-booking-id="'.$bookingId.'">Phát hành vé</button>';
+        $buttons .= '<button class="btn btn-sm btn-primary issue-btn" data-booking-id="'.$bookingId.'">Phát hành vé</button> ';
     }
-    if (!in_array($status, ['used', 'cancelled'])) {
+    if (in_array($status, ['pending', 'paid'])) {
         $buttons .= '<button class="btn btn-sm btn-danger cancel-btn ms-1" data-booking-id="'.$bookingId.'">Hủy</button>';
     }
     return $buttons;

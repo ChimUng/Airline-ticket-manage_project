@@ -1,0 +1,404 @@
+/* IMPORT FONT */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* COLOR VARIABLES */
+:root {
+    --primary-color: #0D1936;
+    --secondary-color: #535354;
+    --background-color: #EFEFEF;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --white-color: rgb(255, 255, 255, 1);
+    --black-color: #000;
+    --input-border-color: #E3E4E6;
+    --transition-3s: 0.3s;
+}
+
+/* GLOBAL STYLES */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* BODY */
+body {
+    display: flex;
+    margin-right: 10%;
+    justify-content: end;
+    align-items: center;
+    height: 100vh;
+
+}
+
+
+@keyframes bounceNaturalV2 {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    20% {
+        transform: translateY(30px);
+        opacity: 1;
+    }
+    35% {
+        transform: translateY(-25px);
+    }
+    50% {
+        transform: translateY(15px);
+    }
+    65% {
+        transform: translateY(-10px);
+    }
+    80% {
+        transform: translateY(6px);
+    }
+    90% {
+        transform: translateY(-3px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.auth-flight {
+    width: 60%;
+    margin-right: 120px;
+    background-color: #82C8B6;
+    height: 90vh;
+    border-top-right-radius: 250px;
+    border-bottom-right-radius: 200px;
+    animation: bounceNaturalV2 1.5s ease-in-out;
+    animation-fill-mode: both;
+    position: relative;
+    overflow: hidden;
+}
+.txtretroshadow {
+    padding-left: 20px;
+    font-size: 50px;
+    color:white;
+    letter-spacing: .05em;
+    text-shadow: 4px 4px 0px #1D2222,7px 0px rgba(31, 31, 31, 0.2);
+    height: 100px;
+    padding-top: 40px;
+    animation: fadeInUp 1s ease-out;
+    opacity: 0;
+    animation-fill-mode: forwards;
+    animation-delay: 0.3s;
+}
+@keyframes fadeInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+.content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin-top: 100px;
+}
+#typing-content{
+    font-size: 1.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: white;
+    white-space: pre-line; /* cho phép xuống dòng với <br> */
+    position: relative;
+}
+
+/* Con trỏ nháy */
+#cursor {
+            display: inline-block;
+            color: white;
+            font-weight: bold;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+/* AUTH CONTAINER */
+.auth-container {
+    position: relative;
+    width: 430px;
+    height: 500px;
+    background-color: var(--white-color);
+    border-radius: 15px;
+    padding: 120px 32px 64px;
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 8px 15px var(--shadow-color);
+    transition: var(--transition-3s);
+    overflow: hidden;
+}
+/* FORM HEADER */
+.form-header{
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 140px;
+    height: 70px;
+    background-color: var(--primary-color);
+    border-radius: 0 0 20px 20px;
+}
+.form-header::before, .form-header::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 30px;
+    height: 30px;
+}
+.form-header::before{
+    left: -30px;
+    border-top-right-radius: 50%;
+    box-shadow: 15px 0 0 var(--primary-color);
+}
+.form-header::after{
+    right: -30px;
+    border-top-left-radius: 50%;
+    box-shadow: -15px 0 0 var(--primary-color);
+}
+/* TITLES */
+.titles{
+    position: relative;
+}
+.title-login, .title-register{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    color: var(--white-color);
+    font-size: 24px;
+    transition: var(--transition-3s);
+}
+.title-register{
+    top: 50px;
+}
+#typing-text {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 5px black;
+    border-right: 3px solid white;
+    white-space: nowrap;
+    overflow: hidden;
+    width: fit-content;
+    animation: blink-caret 0.9s step-end infinite;
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: white }
+}
+
+#after-text {
+    font-size: 20px;
+    margin-top: 20px;
+    color: yellow;
+    animation: fadeIn 1s ease-in forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* FORM BOX */
+.form-box {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    transition: var(--transition-3s);
+}
+#register-form{
+    left: 150%;
+}
+/* BUTTONS */
+button {
+    width: 100%;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border: none;
+    border-radius: 30px;
+    transition: var(--transition-3s);
+}
+button:hover {
+    background-color: darken(var(--primary-color), 10%);
+    color: var(--primary-color);
+}
+
+/* FORM TITLE */
+h2 {
+    text-align: center;
+    font-size: 24px;
+    color: var(--primary-color);
+}
+
+/* INPUT FIELDS */
+.input-box{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+}
+.input-field{
+    width: 100%;
+    height: 55px;
+    font-size: 16px;
+    background: transparent;
+    color: var(--black-color);
+    padding: 0 20px;
+    border: 1px solid var(--input-border-color);
+    border-radius: 30px;
+    outline: none;
+    transition: var(--transition-3s);
+}
+.input-field:focus{
+    border: 1px solid var(--primary-color);
+}
+/* LABELS */
+label{
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+    transition: 0.2s;
+    cursor: text;
+    background: transparent;
+}
+.input-field:focus ~ label,
+.input-field:valid ~ label{
+    top: 0;
+    font-size: 14px;
+    background-color: var(--white-color);
+    color: var(--primary-color);
+    padding: 0 10px;
+}
+.input-field:valid ~ label{
+    color: var(--secondary-color);
+}
+/* ERROR SPAN */
+span {
+    color: red;
+    font-size: 12px;
+}
+
+/* SWITCH FORM */
+.switch-form {
+    text-align: center;
+    margin-top: 15px;
+}
+.switch-form a {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* BACK BUTTON */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center; /* Thêm dòng này để căn giữa */
+    gap: 6px;
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 30px;
+    height: 30px;
+}
+
+.back-button .icon-left {
+    width: 16px;
+    height: 16px;
+    stroke: black;
+    flex-shrink: 0;
+    display: block; /* Thêm display: block để loại bỏ khoảng cách không cần thiết */
+}
+
+
+/* MEDIA QUERIES */
+@media only screen and (max-width: 768px) {
+    .auth-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .form-box {
+        max-width: 90%;
+    }
+}
+.bouncing-balls {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+/* BALL COLOR */
+.ball {
+    position: absolute;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: bounce 2s infinite ease-in-out, moveX 5s infinite linear;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        top: 0;
+    }
+    50% {
+        top: 90%;
+    }
+}
+
+@keyframes moveX {
+    0% {
+        left: 0%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+/* MÁY BAY */
+#plane {
+    position: absolute;
+    font-size: 48px;
+    color: #333;
+    transition: transform 0.1s linear;
+}
+
+.smoke {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: fadeOut 2s linear forwards;
+    filter: blur(1px); /* mịn hơn */
+}
+
+
+@keyframes fadeOut {
+    0% { opacity: 0.6; transform: scale(1); }
+    100% { opacity: 0; transform: scale(2); }
+}

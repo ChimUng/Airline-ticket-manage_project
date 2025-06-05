@@ -1,0 +1,271 @@
+body {
+  font-family: Consolas, monospace;
+  background: linear-gradient(90deg, #5D7B6F, #A4C3A2, #B0D4B8, #EAE7D6, #D7F9FA);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+.history-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 90px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  color: #2c3e50;
+  margin-bottom: 35px;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.ticket-card {
+  background: #fafcff;
+  border: 1px solid #e0e6ed;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.ticket-card:hover {
+  background: #e6f0fa;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.ticket-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-size: 0.95rem;
+}
+
+.ticket-info > div {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  min-width: 120px;
+}
+
+.ticket-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-left: auto;
+}
+.ticket-item {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #34495e;
+}
+
+.ticket-item strong {
+  margin-right: 4px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.ticket-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-end;
+  min-width: 200px;
+}
+
+.xemchitietve-btn {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.xemchitietve-btn:hover {
+  background-color: #187bcd;
+  transform: scale(1.03);
+}
+
+.ticket-status {
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.status-confirmed {
+  background-color: #e0f7e9;
+  color: #1a8245;
+}
+
+.status-cancelled {
+  background-color: #ffe3e5;
+  color: #a61c2a;
+}
+
+.status-unknown {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.chitiet-ticket {
+  margin-top: 15px;
+  padding: 0;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+/* Khi chi tiết vé được mở */
+.chitiet-ticket.show {
+  padding: 15px;
+  max-height: 500px; /* Chỉnh lại max-height sao cho đủ lớn để chứa nội dung */
+  overflow: auto;  /* Cho phép cuộn nếu nội dung vượt quá chiều cao */
+}
+.chitiet-content {
+    display: flex;
+    justify-content: space-between; /* Chia không gian đều giữa 2 phần */
+    gap: 30px; /* Khoảng cách giữa các phần */
+}
+
+.flight-section, .passenger-section {
+    width: 48%; /* Điều chỉnh chiều rộng mỗi phần để chúng không chiếm hết không gian */
+}
+
+.section-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.chitiet-row {
+    margin-bottom: 8px;
+}
+
+.chitiet-label {
+    font-weight: bold;
+}
+
+.chitiet-value {
+    margin-left: 10px;
+}
+
+.no-flights, .no-passengers {
+    font-style: italic;
+    color: gray;
+}
+
+/* Điều chỉnh cho các chuyến bay hoặc hành khách không có thông tin */
+.no-flights, .no-passengers {
+    text-align: center;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ticket-info {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .ticket-actions {
+    grid-column: 1 / -1;
+    justify-content: center;
+    margin-top: 10px;
+    min-width: auto;
+  }
+
+  .ticket-card {
+    padding: 15px;
+  }
+}
+#btnAll {
+  background-color: #7aa37b9e; /* màu xanh lá */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin: 10px;
+}
+
+#btnAll:hover {
+  background-color: #263e28a1; /* màu xanh lá đậm khi hover */
+}
+#btnConfirmed {
+  background-color: #7aa37b9e; /* màu xanh lá */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin: 10px;
+}
+
+#btnConfirmed:hover {
+  background-color: #263e28a1; /* màu xanh lá đậm khi hover */
+}
+#btnCancelled {
+  background-color: #7aa37b9e; /* màu xanh lá */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin: 10px;
+}
+
+#btnCancelled:hover {
+  background-color: #263e28a1; /* màu xanh lá đậm khi hover */
+}
+
+@media (max-width: 480px) {
+  .ticket-info {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+
+  .history-container {
+    padding: 15px;
+    margin: 20px auto;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .ticket-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

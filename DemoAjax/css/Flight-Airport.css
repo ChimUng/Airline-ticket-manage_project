@@ -1,0 +1,973 @@
+/*Khung Backgruond máu bay*/
+.containerflightproduct {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.runwayflight-wrapper {
+  width: 100%;
+height: 100vh;
+background-image: url('/DemoAjax/img/background2.jpg');
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+transform-origin: center; /* Quan trọng để thu về giữa */
+}
+
+#airplane_flightproduct {
+position: absolute;
+width: 500px;
+height: 500px;
+bottom: 20%;
+left: 50%;
+transform: translateX(-50%);
+z-index: 20;
+filter: drop-shadow(10px 10px 30px rgba(0, 0, 0, 0.9));
+
+}
+
+#content_flightproduct {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    z-index: 15;
+    color: white;
+    font-size: 48px;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+    font-weight: bold;
+    text-align: center;
+}
+#content_flightproduct h2 {
+font-size: 2.5rem;
+}
+
+#content_flightproduct p{
+    font-size: 1.5rem;
+}
+
+.control-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  border-radius: 10px;
+  z-index: 20;
+}
+
+.fly-button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.fly-button:hover {
+  background-color: #45a049;
+}
+/* FROM TÌM KIẾM */
+.search-frame {
+    height: 250px;
+    width: 70%;
+    box-shadow: 0 5px 5px rgb(215, 215, 215);
+    border-radius: 22px;
+    position: absolute;
+    left: 15%;
+    bottom: 0;
+    background-color: white;
+    z-index: 25;
+}
+.hidden {
+  display: none;
+}
+.form-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  padding: 20px 30px;
+  border-radius: 16px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.form-group h2 {
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin: 0;
+}
+/* LỰA CHỌN KIỂU CHUYẾN BAY */
+.flight-options {
+  display: flex;
+  gap: 20px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.flight-options input[type="radio"] {
+  display: none;
+}
+
+.option-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #666;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input[type="radio"]:checked + .option-tab {
+  color: #7fffd4;
+  font-weight: 600;
+  border-bottom: 2px solid #7fffd4;
+}
+
+.search-frame h1,
+.search-frame h3{
+    text-align: center;
+    margin-top: 0px;
+}
+.container_search {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 15px;
+}
+
+
+/* LỰA CHỌN ĐIỂM ĐẾN VÀ ĐIỂM ĐI*/
+.search-form {
+  display: flex;
+  position: relative;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+}
+.search-form::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background-color: #e0e0e0;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+.field-container {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  margin: 10px;
+}
+
+.field-container label {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.search-field {
+  width: 230px;
+  display: flex;
+  flex: 1;
+  padding: 12px;
+  position: relative;
+}
+
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  aspect-ratio: 1 / 1; /* đảm bảo luôn là hình vuông */
+  background-color: #fff7e6;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0e1c2;
+  margin-bottom: 8px;
+  margin-left: 10px;
+  transition: transform 0.2s ease;
+}
+
+.icon-circle:hover {
+  transform: scale(1.05);
+}
+
+.departure-icon {
+  color: #f4a261;
+  font-size: 18px;
+}
+
+.arrival-icon {
+  color: #f4a261;
+  font-size: 18px;
+}
+
+.field-input {
+  width: 100%;
+  border: none;
+  font-size: 16px;
+  color: #333;
+  outline: none;
+  font-weight: 500;
+}
+
+.field-input::placeholder {
+  color: #aaa;
+}
+/* SELECT KHI TÌM KIẾM CHUYẾN BAY*/
+.result-container {
+  position: absolute;
+  top: 100px; /* Tùy chỉnh khoảng cách từ trên xuống */
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  z-index: 10;
+}
+
+
+.search-result-title {
+  font-weight: bold;
+  font-size: 14px;
+  color: #555;
+  padding: 8px 12px 4px;
+}
+
+.search-result-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  border-top: 1px solid #eee;
+}
+
+.search-result-item button {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+  color: #333;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+
+  /* ✨ xử lý quá dài */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-item button:hover {
+  background-color: #f0f8ff;
+}
+
+.search-result-item.empty {
+  padding: 10px 12px;
+  color: #999;
+  font-style: italic;
+}
+
+/* DATA SET TIME NGÀY ĐẾN NGÀY ĐI*/
+.date-selector {
+  position: relative;
+  display: inline-block;
+  margin-left: 15px;
+}
+.container_dateSelector{
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 10px 15px;
+  cursor: pointer;
+  width: 150px;
+}
+.date-icon {
+  font-size: 22px;
+  color: #4a90e2;
+}
+
+.date-text .label {
+  font-size: 13px;
+  color: #888;
+}
+
+.date-text .value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+.date-picker {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 15px;
+  padding: 15px;
+  width: 175px;
+  margin-top: 5px;
+  position: absolute;
+  z-index: 999;
+}
+.mb-3{
+    width: 100px;
+    border-radius: 21px;
+}
+.mb-3 .hidden{ display: none; }
+.mb-1{
+    width: 16.5%;
+    margin-left: 4%;
+    border-radius: 21px;
+}
+.mb-3 select{
+    border-color: white;
+    width: 100%;
+    font-size:16px;
+    color:grey;
+}
+.mb-3 select:hover{
+    border-color: white;
+}
+.mb-3 select:focus{
+    border-color: white;
+    outline: none;
+}
+.mb-1 input,
+.mb-3 input{
+    width: 100%;
+    height: 100%;
+    border: 1px solid white; 
+    background-color: white;
+    outline: none;
+    font-size:17px;
+    color:grey;
+}
+.mb-3 input:focus{
+    border: 1px solid white;
+} 
+
+.frame1{
+    height: 55px;
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    float:left;
+}
+.container_search button{
+  padding: 5px 10px; /* tăng padding cho nút to đều */
+  background-color: #7fffd4; /* màu xanh mint đẹp như ảnh */
+  border: none;
+  border-radius: 12px; /* bo góc mượt */
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 50px;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-right: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* đổ bóng nhẹ */
+  transition: all 0.2s ease;
+}
+
+.container_search button:hover {
+  transform: scale(1.05); /* hiệu ứng phóng nhẹ khi hover */
+  background-color: #66e6c2;
+}
+/* PASSENGER SELECT*/
+.guest-selector {
+  position: relative;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+.guest-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 10px 15px;
+  cursor: pointer;
+  width: 150px;
+}
+
+.guest-icon {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.guest-label {
+  font-size: 13px;
+  color: gray;
+}
+
+#guest-count {
+  font-weight: bold;
+  font-size: 14px;
+}
+.passenger-popup {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 15px;
+  padding: 15px;
+  width: 250px;
+  margin-top: 5px;
+  position: absolute;
+  z-index: 999;
+}
+.passenger-input {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.passenger-popup input {
+  width: 60px;
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.passenger-popup button{
+  width: 20%;
+  margin-left: 4%;
+  border-radius: 21px;
+  height: 90%;
+  margin-top: 5px;
+  background-color: aquamarine;
+  border: solid aquamarine;
+  right:0px;
+}
+/* HÀM XỬ LÍ PHÂN TRANG */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+/*CONTENT FLIGHT*/
+.progress-steps {
+  max-width: 1000px;
+  margin: 48px auto 48px auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  user-select: none;
+}
+.step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  right: -190px;
+  width: calc(100% - -50px);
+  height: 4px;
+  background: #f0f0f0;
+  z-index: 0;
+}
+/* .step.active:not(:last-child)::after {
+  background: #6cc4c7;
+} */
+.step .circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  margin: 0 auto 8px auto;
+  position: relative;
+  z-index: 1;
+}
+.step.active .circle {
+  background: #6cc4c7;
+  box-shadow: 0 0 0 8px #a0d9db;
+}
+.step .circle::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.step.active .circle::before {
+  background: #0a5a5a;
+}
+.step strong {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  color: #222;
+}
+.step span {
+  font-size: 12px;
+  color: #666;
+}
+
+/* CONTAINER FLIGHT_PRODUCT VÀ FLIGHT*/
+.container_flight_schedule{
+  display: flex;
+}
+/* FROM SELECT CHUYẾN BAY LẤY ĐƯỢC */
+.container_flight{
+  display: block;
+  width: 50%;
+}
+#departure-flights-container {
+  display: block;
+  width: 100%;
+  margin-top: 100px;
+  border-radius: 20px;
+  box-shadow: 0 4px 30px rgba(86, 134, 115, 0.532); 
+}
+
+#return-flights-container{
+  display: block;
+  width: 100%;
+  margin-top: 100px;
+  border-radius: 20px;
+  box-shadow: 0 4px 30px rgba(86, 134, 115, 0.532); 
+}
+.flight_schedule{
+  display: flex;
+  width: 40%;
+  margin-top: 100px;
+  background-color: white;
+}
+.selective{
+  height: 200px;
+  width: 50%;
+  border:solid rgb(218, 218, 218) 1px;
+  box-shadow: 10px 1px 10px rgb(101, 152, 129);
+  margin-left: 15%;
+  margin-right: 5%;
+  border-radius: 20px;
+}
+.container_checkbox label{
+  font-size: 0.8rem;
+  color: rgba(6, 6, 5, 0.327);
+}
+.container_checkbox{
+  height: 120px;
+  overflow-y: auto;         
+  scrollbar-width: none;    
+}
+
+.container_checkbox::-webkit-scrollbar {
+  display: none;         
+}
+.mb-5 {
+  height: 20px;
+  width: 100%;
+  border-bottom: 1px solid rgb(215, 215, 215);
+  padding-bottom: 20px;
+}
+.mb-5 h2{
+  margin-left: 20px;
+}
+.mb-6{
+  height: 40px;
+  width:100%;
+  border-bottom: 1px rgb(215, 215, 215) solid;
+  padding-bottom: 20px;
+  display: flex;
+}
+.mb-6 i{
+  margin-top: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+/* #iconmb{
+  font-size:40px;
+  margin-top: 10px;
+  margin-right: 30px;
+  color: rgb(5, 57, 124);
+}  */
+.select_flight_schedule{
+  height: 900px;
+  width: 50%;
+  border:solid rgb(218, 218, 218) 1px;
+  box-shadow: 0 1px 2px rgb(215, 215, 215);
+  margin-right: 15%;
+  border-radius: 20px;
+  background-color: white;
+  position: relative;
+}
+.select-day{
+  height: 65px;
+  width: 96%;
+  margin: 0 2%;
+  display: flex;
+  margin-top: 20px;
+}
+.select-day div{
+  font-size:20px;
+  height: 65px;
+  width: 16%;
+  margin: 0 2%;
+  border:1px rgb(215, 215, 215) solid;
+  border-radius:20px;
+  text-align: center;
+  display: inline-block;
+  line-height: 5px;
+  cursor: pointer;
+
+}
+.select-day div:hover {
+  background-color: #e0e0e0;
+
+}
+
+.select-day .active {
+  background-color: #77DADA;
+  color: white;
+  font-weight: bold;
+  transform: scale(1.05);
+}
+.flight-ticket{
+  height: 100px;
+  width: 96%;
+  margin: 0 2%;
+  margin-top: 20px;
+  border:1px rgb(215, 215, 215) solid;
+  box-shadow: 0 1px 2px rgb(215, 215, 215);
+  border-radius:20px;
+  display: flex;
+}
+.flight-ticket img{
+  height: 50px;
+  margin:25px 20px;
+}
+.ct-1{
+  height: 50px;
+  width: 150px;
+  margin-top:25px;
+  display: inline-block;
+}
+.ct-1 p{
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  margin-top: 0px;
+}
+#ct-1-bot{
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 0.8rem;
+  color:grey;
+  margin-top: -5px;
+}
+#price{
+  color: green;
+}
+.ct-2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-top: 25px;
+}
+
+.ct-2 button {
+  background-color: white;
+  border: 1px solid rgba(156, 134, 134, 0.429);
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: #455447bb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ct-2 button i {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.ct-2-xemchitiet {
+  margin-left: 5px;
+  margin-top:30px;
+  padding-right:10px;
+}
+.xemchitiet {
+  background-color: white;
+  border: none;
+  padding: 10px;
+  color: #455447bb;
+}
+/* XEM CHI TIẾT*/
+.container_xemchitiet {
+  width: 85%;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+  background-color: #fff;
+  padding: 0 20px;
+  border: 1px solid #eee;
+  margin-left: 5%;
+  margin-right: 5%;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+.container_xemchitiet.active {
+  max-height: 400px; /* hoặc auto dùng JS */
+  padding: 20px;
+}
+.add-to-cart-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+}
+
+.flight-info {
+  background-color: white;
+  padding: 15px;
+  max-width: 300px;
+  margin-left: auto; /* Đưa phần này sang bên phải */
+}
+
+.flight-info p {
+  padding-top: 10px;
+  margin: 5px 0;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  color: #8aa795c9;
+}
+.flight-info p strong {
+  font-size: 14px;
+  color: #8aa795c9;
+  font-family: 'Roboto', sans-serif;
+}
+.time-location {
+  margin-left: 20px;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.time-location span {
+  font-family: 'Roboto', sans-serif;
+  color: #666;
+}
+.logo {
+  display: block;
+  width:50px;
+}
+/* NÚT CHUYỂN TRANG */
+.page-cont-return , .page-cont-departure {
+  display: flex;
+  align-items: end;
+  justify-content: end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-right: 30px;
+  padding-bottom: 30px;
+}
+.fa-angle-right{
+  color: #568973c6;
+  border : 1px solid rgba(77, 186, 146, 0.211);
+  padding: 8px 12px;
+  border-bottom-right-radius: 50%;
+  border-top-right-radius: 50%;
+}
+.fa-angle-left{
+  color: #568973c6;
+  border : 1px solid rgba(77, 186, 146, 0.211);
+  padding: 8px 12px;
+  border-bottom-left-radius: 50%;
+  border-top-left-radius: 50%;
+}
+.fa-angle-right:hover{
+  background-color: #95be9662;
+}
+.fa-angle-left:hover{
+  background-color: #95be9662;
+}
+
+.pagination {
+  display: inline-block;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+.page-btn {
+  background-color: white;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.page-btn.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* PANNER */
+.partner-section {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 60px 100px;
+  background-color: #f8f9fa;
+}
+
+.partner-left h2 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #0a1a2f;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.underline {
+  margin-top: 16px;
+  height: 4px;
+  width: 80px;
+  background: repeating-linear-gradient(
+    to right,
+    #48c9b0,
+    #48c9b0 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+.partner-right p {
+  max-width: 500px;
+  font-size: 18px;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+@media  (max-width: 1200px) {
+  .display_info {
+      height: 350px;
+      width: 60%;
+      margin-left: 20%;}
+  .display_info2{
+      display:inline-block;
+      height: auto;
+  }
+  .mb-2 {
+      right: 250px;
+  }
+  .mb-4 {
+      width: 80%;
+      margin-left: 5%;
+  }
+  .display_info2.four-fields .mb-4 {
+      width: 80%;
+  }
+  .abc {
+      width: 84%;
+      margin-left: 5%;
+      margin-top: 10px;
+      position:static;
+  }
+  .flight_schedule {
+      display:block;
+  }
+  .selective {
+      height: fit-content;
+      width: 90%;
+      margin-left: 5%;
+      margin-right: 5%;
+  }
+  .select_flight_schedule {
+      width: 90%;
+      margin-left: 5%;
+      margin-top: 30px;
+  }
+}
+@media (max-width:950px){
+  .display_info1 {
+      height: 50px;
+      display: block;
+
+  }
+  .mb-2 {
+      position: static;
+      margin-left: 1%;
+  }
+
+}
+@media  (max-width: 1200px) {
+  .search-frame{
+    height: 350px;
+  }
+  .guest-box {
+    margin-top: 100px;
+  }
+  .container_search
+  #confirmPassengers {
+        margin-top: 100px;
+  }
+.container_flight_schedule{
+  display: block;
+}
+.container_flight{
+  display: block;
+  width: 90%;
+  margin-left: 5%;
+}
+.flight_schedule{
+  width: 90%;
+  margin-left: 5%;
+}
+
+}
+@media  (max-width: 1000px) {
+.container_dateSelector {
+      margin-top: 100px;
+}
+
+}
+@media  (max-width: 800px) {
+  .search-frame{
+    height: 350px;
+            left: 5%;
+        width: 90%;
+  }
+}

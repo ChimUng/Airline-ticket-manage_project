@@ -1,0 +1,88 @@
+#cart {
+    margin-top: 100px;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    height: 100vh; /* Đảm bảo cart chiếm hết chiều cao màn hình */
+    text-align: center; /* Căn giữa nội dung văn bản */
+}
+
+#cart-container {
+    width: 500px;
+    height: 80vh;
+    margin: 20px auto;
+    border: 1px solid rgba(128, 168, 130, 0.604);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column; /* Sắp xếp các phần tử con theo chiều dọc */
+    align-items: center; /* Căn giữa các phần tử con trong container theo chiều ngang */
+    overflow-y: auto; /* Cho phép cuộn dọc nếu nội dung dài hơn chiều cao */
+}
+
+
+#cart-container h2 {
+    color: black;
+    text-align: center; /* Căn giữa văn bản */
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    padding: 16px;
+    margin: 10px 5px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+}
+
+.cart-item:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.airline-logo img {
+    width: 60px;
+    height: auto;
+    border-radius: 6px;
+}
+
+.flight-info {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 14px;
+    flex: 1;
+}
+
+.airline-code {
+    font-weight: bold;
+}
+
+.flight-time {
+    font-weight: bold;
+}
+
+.flight-price {
+    color: green;
+    font-weight: bold;
+}
+
+.flight-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.flight-actions button {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.flight-actions button:hover {
+    background: #f1f1f1;
+}

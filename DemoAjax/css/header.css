@@ -1,0 +1,87 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: transparent;
+    padding: 10px 20px;
+    height: 15vh;
+    width: 100%;
+    z-index: 50;
+    position: fixed;
+    box-sizing: border-box; 
+    top: 0;
+    left: 0;
+    transition: transform 0.8s ease-in-out; 
+    box-sizing: border-box;
+}
+
+/* Style cho phần hiển thị tên người dùng */
+#userName {
+    font-size: 16px;
+    margin-right: 10px;
+    color: #333;
+}
+
+#userDisplayName {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Style cho nút logout */
+#logoutBtn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#logoutBtn:hover {
+    background-color: #c82333;
+}
+
+.navbar .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    padding-left: 30px;
+}
+.navbar .logo span {
+    margin-left: 5px;
+}
+.navbar .links a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: black;
+    text-decoration: none;
+    font-size: 18px;
+}
+.navbar .links a:hover {
+    color: #007bff;
+}
+.navbar .actions button {
+    margin-left: 10px;
+    padding: 5px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    color: black;
+    margin-right: 20px;
+}
+.navbar .actions .signin {
+    background-color:yellowgreen;
+    border: none;
+    border-radius: 20px;
+    color: black;
+    width: 100px;
+    height: 6vh;
+    padding: 15px;
+    text-decoration: none;
+}
+.navbar .actions button:hover {
+    opacity: 0.8;
+}

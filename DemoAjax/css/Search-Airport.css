@@ -1,0 +1,754 @@
+.custom-date {
+    padding: 10px;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.custom-date:hover {
+    border-color: #0056b3;
+    background-color: #e7f1ff;
+}
+
+.custom-date:focus {
+    border-color: #ff6600;
+    background-color: #fff;
+}
+
+.custom-date::-webkit-calendar-picker-indicator {
+    filter: invert(50%);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.hidden {
+    display: none;
+  }
+  body{
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
+}
+body.no-scroll {
+    overflow: hidden;
+}
+.container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+  .runway-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200%;
+  }
+
+  .runway {
+    width: 100%;
+    height: 100vh;
+    background-image: url('/DemoAjax/img/Sanbay1(2).png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  #airplane {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    bottom: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    filter: drop-shadow(10px 10px 30px rgba(0, 0, 0, 0.9)); /* Bóng cho hình ảnh trong suốt */
+  }
+  #content_flight {
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      z-index: 15;
+      color: white;
+      font-size: 48px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+      font-weight: bold;
+  }
+
+
+  .control-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 10px;
+    z-index: 20;
+  }
+
+  .fly-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .fly-button:hover {
+    background-color: #45a049;
+  }
+
+  .search-frame {
+    height: 250px;
+    width: 70%;
+    box-shadow: 0 5px 5px rgb(215, 215, 215);
+    border-radius: 22px;
+    position: absolute;
+    top: -275px;
+    left: 15%;
+    background-color: white;
+}
+.form-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  padding: 20px 30px;
+  border-radius: 16px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.form-group h2 {
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin: 0;
+}
+/* LỰA CHỌN KIỂU CHUYẾN BAY */
+.flight-options {
+  display: flex;
+  gap: 20px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.flight-options input[type="radio"] {
+  display: none;
+}
+
+.option-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #666;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input[type="radio"]:checked + .option-tab {
+  color: #7fffd4;
+  font-weight: 600;
+  border-bottom: 2px solid #7fffd4;
+}
+
+.search-frame h1,
+.search-frame h3{
+    text-align: center;
+    margin-top: 0px;
+}
+.container_search {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 15px;
+}
+
+
+/* LỰA CHỌN ĐIỂM ĐẾN VÀ ĐIỂM ĐI*/
+.search-form {
+  display: flex;
+  position: relative;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+}
+.search-form::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background-color: #e0e0e0;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+.field-container {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  margin: 10px;
+}
+
+.field-container label {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.swap-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  background-color: #e6f2ef;
+  border-radius: 50%;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.search-field {
+  width: 230px;
+  display: flex;
+  flex: 1;
+  padding: 12px;
+  position: relative;
+}
+
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  aspect-ratio: 1 / 1; /* đảm bảo luôn là hình vuông */
+  background-color: #fff7e6;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0e1c2;
+  margin-bottom: 8px;
+  margin-left: 10px;
+  transition: transform 0.2s ease;
+}
+
+.icon-circle:hover {
+  transform: scale(1.05);
+}
+
+.departure-icon {
+  color: #f4a261;
+  font-size: 18px;
+}
+
+.arrival-icon {
+  color: #f4a261;
+  font-size: 18px;
+}
+
+.field-input {
+  width: 100%;
+  border: none;
+  font-size: 16px;
+  color: #333;
+  outline: none;
+  font-weight: 500;
+}
+
+.field-input::placeholder {
+  color: #aaa;
+}
+/* SELECT KHI TÌM KIẾM CHUYẾN BAY*/
+.result-container {
+  margin-top: 8px;
+  display: none;
+  max-width: 100%; /* không cho vượt ra ngoài khung */
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 10;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.search-result-title {
+  font-weight: bold;
+  font-size: 14px;
+  color: #555;
+  padding: 8px 12px 4px;
+}
+
+.search-result-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  border-top: 1px solid #eee;
+}
+
+.search-result-item button {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+  color: #333;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+
+  /* ✨ xử lý quá dài */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-item button:hover {
+  background-color: #f0f8ff;
+}
+
+.search-result-item.empty {
+  padding: 10px 12px;
+  color: #999;
+  font-style: italic;
+}
+
+/* DATA SET TIME NGÀY ĐẾN NGÀY ĐI*/
+.date-selector {
+  position: relative;
+  display: inline-block;
+  margin-left: 15px;
+}
+.container_dateSelector{
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 10px 15px;
+  cursor: pointer;
+  width: 150px;
+}
+.date-icon {
+  font-size: 22px;
+  color: #4a90e2;
+}
+
+.date-text .label {
+  font-size: 13px;
+  color: #888;
+}
+
+.date-text .value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+.date-picker {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 15px;
+  padding: 15px;
+  width: 175px;
+  margin-top: 5px;
+  position: absolute;
+  z-index: 999;
+}
+.mb-3{
+    width: 100px;
+    border-radius: 21px;
+}
+.mb-3 .hidden{ display: none; }
+.mb-1{
+    width: 16.5%;
+    margin-left: 4%;
+    border-radius: 21px;
+}
+.mb-3 select{
+    border-color: white;
+    width: 100%;
+    font-size:16px;
+    color:grey;
+}
+.mb-3 select:hover{
+    border-color: white;
+}
+.mb-3 select:focus{
+    border-color: white;
+    outline: none;
+}
+.mb-1 input,
+.mb-3 input{
+    width: 100%;
+    height: 100%;
+    border: 1px solid white; 
+    background-color: white;
+    outline: none;
+    font-size:17px;
+    color:grey;
+}
+.mb-3 input:focus{
+    border: 1px solid white;
+} 
+
+.frame1{
+    height: 55px;
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    float:left;
+}
+.container_search #confirmPassengers{
+  padding: 5px 10px; /* tăng padding cho nút to đều */
+  background-color: #7fffd4; /* màu xanh mint đẹp như ảnh */
+  border: none;
+  border-radius: 12px; /* bo góc mượt */
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 50px;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-right: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* đổ bóng nhẹ */
+  transition: all 0.2s ease;
+}
+
+.container_search #confirmPassengers:hover {
+  transform: scale(1.05); /* hiệu ứng phóng nhẹ khi hover */
+  background-color: #66e6c2;
+}
+/* PASSENGER SELECT*/
+.guest-selector {
+  position: relative;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+.guest-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 10px 15px;
+  cursor: pointer;
+  width: 150px;
+  pointer-events: auto;
+}
+
+.guest-icon {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.guest-label {
+  font-size: 13px;
+  color: gray;
+}
+
+#guest-count {
+  font-weight: bold;
+  font-size: 14px;
+}
+.passenger-popup {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 15px;
+  padding: 15px;
+  width: 250px;
+  margin-top: 5px;
+  position: absolute;
+  z-index: 999;
+}
+.passenger-input {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.passenger-popup input {
+  width: 60px;
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* PHẦN GIAO DIỆN SLIDE BÊN DƯỚI*/
+.slideshow-container {
+    position:relative;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 150px;
+
+}
+.slides {
+    display: none; /* Ẩn tất cả hình ảnh ban đầu */
+    height: 500px;
+    width: 100%;
+        border-radius:24px;
+}
+.active {
+    display: block; /* Hiện hình ảnh đang hoạt động */
+}
+.partners h2,.search-frame h2{
+    text-align: center;
+    padding-top:20px;
+    color:rgb(17, 34, 69);
+    font-weight: bold;
+}
+h1,h3{
+    text-align: center;
+}
+.promote{
+    height:300px;
+    width:80%;
+    margin-left: 10%;
+    display: flex;
+    margin-top: 50px;
+    position:relative;
+}
+.promote_location{
+    width:32%;
+    height: 95%;
+    margin: 0 1.5%;
+    padding: 20px;
+    border: solid 1.5px rgb(180, 178, 178);
+    border-radius:28px;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    float:left;
+    box-shadow: 0 2px 2px rgb(214, 213, 213);
+}
+
+.promote_location img{
+    width: 100%;
+    height: 60%;
+    border-radius:28px;
+}
+
+.partners{
+    height:380px;
+    width:70%;
+    margin-left: 15%;
+    margin-top:100px ;
+}
+.partners p{
+    font-size: 17px;
+    color: grey;
+    font-weight: bold;
+
+}
+.partners_airline{
+    border-bottom: solid 2px grey;
+    position: relative;
+    height: 50%;
+    width: 100%;
+}
+.partners_bank{
+    position: relative;
+    height: 50%;
+    width: 100%;
+    margin-top: 40px;
+    
+}
+
+.partners_bank img,
+.partners_airline img{
+    height: auto;
+    position: absolute;
+    width: 220px;
+    right: 20px;
+    top:10px;
+}
+.credibility{
+    height: 300px;
+    width: 40%;
+    margin-left: 30%;
+    display: flex;
+    position: relative;
+    font-family: 'Nunito', sans-serif;
+}
+.credibility div{
+    height: 100%;
+    width: 50%;
+    text-align:center;
+    padding: 10px;
+    font-size: 18px;
+}
+.credibility div img{
+    max-width:76%;
+    margin: 13%;
+}
+.credibility div b{
+    text-align: center;
+}
+/* PHẦN INTRO ĐẦU WEB*/
+#intro {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  #bg-left, #bg-right {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 0;
+    transition: transform 1s ease;
+  }
+
+  #bg-left {
+    left: 0;
+    background: linear-gradient(to top, #87cefa, #ffffff);
+  }
+
+  #bg-right {
+    right: 0;
+    background: linear-gradient(to top, #87cefa, #ffffff);
+  }
+
+  #bg-left.slide-out {
+    transform: translateX(-100%);
+  }
+
+  #bg-right.slide-out {
+    transform: translateX(100%);
+  }
+
+  #flightCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  #brandName {
+    position: relative;
+    z-index: 2;
+    font-size: 72px;
+    font-weight: normal; /* Great Vibes không cần bold */
+    font-family: 'Great Vibes', cursive;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1s ease;
+    color: #ffffff;
+    text-shadow: 0 0 1px white;
+    -webkit-text-fill-color: transparent;
+  }
+  
+
+  #brandName.split .letter:nth-child(-n+4) {
+    animation: moveLeft 1s forwards;
+  }
+
+  #brandName.split .letter:nth-child(n+5) {
+    animation: moveRight 1s forwards;
+  }
+
+  @keyframes moveLeft {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(-100vw); opacity: 0; }
+  }
+
+  @keyframes moveRight {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(100vw); opacity: 0; }
+  }
+
+  #main-content {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+  }
+
+  #main-content.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+.Xacnhanpassenger{
+  background: none;
+  border: none;
+  width: 200px;
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+  color: #333;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+@media  (max-width: 1200px) {
+  .search-frame{
+    height: 350px;
+  }
+  .guest-box {
+    margin-top: 100px;
+  }
+  .container_search
+  #confirmPassengers {
+        margin-top: 100px;
+  }
+  .slides {
+        margin-top: 300px;
+  }
+  .partners p {
+    width:60%;
+  }
+  .partners h2{
+    text-align: left;
+  }
+  .partners_bank img, .partners_airline img
+ {
+  width: 180px;
+ }
+ 
+}
+@media  (max-width: 1000px) {
+.container_dateSelector {
+      margin-top: 100px;
+}
+
+}
+@media  (max-width: 800px) {
+  .search-frame{
+    height: 350px;
+            left: 5%;
+        width: 90%;
+  }
+}

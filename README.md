@@ -16,4 +16,4 @@ Tài khoản test hệ thống:
 -tk:thanh12398@gmail.com  
 -mk:12345678  
 
-Link figma để các anh chị kham khảo UI:https://www.figma.com/file/1mYV3ixu8jwd6qtAyWjaP2/Untitled
+Link figma for our UI: https://www.figma.com/file/1mYV3ixu8jwd6qtAyWjaP2/Untitled
